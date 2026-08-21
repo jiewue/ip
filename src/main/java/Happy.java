@@ -8,8 +8,8 @@ public class Happy {
     private static final String DIVIDER = "____________________________________________________________";
 
     /**
-     * Starts the Happy chatbot program, stores tasks entered by the user,
-     * lists them when requested, and exits when the user enters "bye".
+     * Starts the Happy chatbot program, manages Task objects,
+     * supports mark/unmark functionality, and exits when the user enters "bye".
      *
      * @param args Command line arguments (not used).
      */
@@ -26,7 +26,7 @@ public class Happy {
         System.out.println("What can I do for you?");
         System.out.println(DIVIDER);
 
-        String[] tasks = new String[100];
+        Task[] tasks = new Task[100];
         int taskCount = 0;
 
         Scanner scanner = new Scanner(System.in);
@@ -39,12 +39,31 @@ public class Happy {
                 break;
             } else if (input.equals("list")) {
                 System.out.println(DIVIDER);
+                System.out.println("Here are the tasks in your list:");
                 for (int i = 0; i < taskCount; i++) {
-                    System.out.println((i + 1) + ". " + tasks[i]);
+                    System.out.println((i + 1) + "." + tasks[i]);
                 }
                 System.out.println(DIVIDER);
+            } else if (input.startsWith("mark ")) {
+                int index = Integer.parseInt(input.substring(5)) - 1;
+                if (index >= 0 && index < taskCount) {
+                    tasks[index].markAsDone();
+                    System.out.println(DIVIDER);
+                    System.out.println("Nice! I've marked this task as done:");
+                    System.out.println("  " + tasks[index]);
+                    System.out.println(DIVIDER);
+                }
+            } else if (input.startsWith("unmark ")) {
+                int index = Integer.parseInt(input.substring(7)) - 1;
+                if (index >= 0 && index < taskCount) {
+                    tasks[index].markAsNotDone();
+                    System.out.println(DIVIDER);
+                    System.out.println("OK, I've marked this task as not done yet:");
+                    System.out.println("  " + tasks[index]);
+                    System.out.println(DIVIDER);
+                }
             } else {
-                tasks[taskCount] = input;
+                tasks[taskCount] = new Task(input);
                 taskCount++;
                 System.out.println(DIVIDER);
                 System.out.println("added: " + input);
