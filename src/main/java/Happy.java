@@ -8,8 +8,8 @@ public class Happy {
     private static final String DIVIDER = "____________________________________________________________";
 
     /**
-     * Starts the Happy chatbot program, reads user commands, echoes them back,
-     * and exits when the user enters "bye".
+     * Starts the Happy chatbot program, stores tasks entered by the user,
+     * lists them when requested, and exits when the user enters "bye".
      *
      * @param args Command line arguments (not used).
      */
@@ -26,6 +26,9 @@ public class Happy {
         System.out.println("What can I do for you?");
         System.out.println(DIVIDER);
 
+        String[] tasks = new String[100];
+        int taskCount = 0;
+
         Scanner scanner = new Scanner(System.in);
         while (true) {
             String input = scanner.nextLine();
@@ -34,10 +37,19 @@ public class Happy {
                 System.out.println("Bye. Hope to see you again soon!");
                 System.out.println(DIVIDER);
                 break;
+            } else if (input.equals("list")) {
+                System.out.println(DIVIDER);
+                for (int i = 0; i < taskCount; i++) {
+                    System.out.println((i + 1) + ". " + tasks[i]);
+                }
+                System.out.println(DIVIDER);
+            } else {
+                tasks[taskCount] = input;
+                taskCount++;
+                System.out.println(DIVIDER);
+                System.out.println("added: " + input);
+                System.out.println(DIVIDER);
             }
-            System.out.println(DIVIDER);
-            System.out.println(input);
-            System.out.println(DIVIDER);
         }
         scanner.close();
     }
