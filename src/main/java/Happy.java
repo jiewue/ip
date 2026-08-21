@@ -1,8 +1,10 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
  * Main entry point for the Happy chatbot application.
- * Handles task creation, listing, marking, and exception management.
+ * Handles task management (Todo, Deadline, Event), listing, marking, deleting,
+ * using ArrayList collections and custom exception handling.
  */
 public class Happy {
     // Horizontal line separator used for formatting output blocks
@@ -27,8 +29,7 @@ public class Happy {
         System.out.println("What can I do for you?");
         System.out.println(DIVIDER);
 
-        Task[] tasks = new Task[100];
-        int taskCount = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -46,20 +47,22 @@ public class Happy {
                 } else if (input.equalsIgnoreCase("list")) {
                     System.out.println(DIVIDER);
                     System.out.println("Here are the tasks in your list:");
-                    for (int i = 0; i < taskCount; i++) {
-                        System.out.println((i + 1) + "." + tasks[i]);
+                    for (int i = 0; i < tasks.size(); i++) {
+                        System.out.println((i + 1) + "." + tasks.get(i));
                     }
                     System.out.println(DIVIDER);
+                } else if (input.startsWith("delete") || input.equalsIgnoreCase("delete")) {
+                    handleDeleteCommand(input, tasks);
                 } else if (input.startsWith("mark") || input.equalsIgnoreCase("mark")) {
-                    handleMarkCommand(input, tasks, taskCount);
+                    handleMarkCommand(input, tasks);
                 } else if (input.startsWith("unmark") || input.equalsIgnoreCase("unmark")) {
-                    handleUnmarkCommand(input, tasks, taskCount);
+                    handleUnmarkCommand(input, tasks);
                 } else if (input.startsWith("todo") || input.equalsIgnoreCase("todo")) {
-                    taskCount = handleTodoCommand(input, tasks, taskCount);
+                    handleTodoCommand(input, tasks);
                 } else if (input.startsWith("deadline") || input.equalsIgnoreCase("deadline")) {
-                    taskCount = handleDeadlineCommand(input, tasks, taskCount);
+                    handleDeadlineCommand(input, tasks);
                 } else if (input.startsWith("event") || input.equalsIgnoreCase("event")) {
-                    taskCount = handleEventCommand(input, tasks, taskCount);
+                    handleEventCommand(input, tasks);
                 } else {
                     throw new HappyException("OOPS!!! I'm sorry, but I don't know what that means :-(");
                 }
@@ -72,19 +75,38 @@ public class Happy {
         scanner.close();
     }
 
-    private static int handleTodoCommand(String input, Task[] tasks, int taskCount) throws HappyException {
+    private static void handleDeleteCommand(String input, ArrayList<Task> tasks) throws HappyException {
+        String indexStr = input.length() > 6 ? input.substring(6).trim() : "";
+        if (indexStr.isEmpty()) {
+            throw new HappyException("OOPS!!! Please specify a task number to delete.");
+        }
+        try {
+            int index = Integer.parseInt(indexStr) - 1;
+            if (index < 0 || index >= tasks.size()) {
+                throw new HappyException("OOPS!!! Task number " + (index + 1) + " does not exist.");
+            }
+            Task removedTask = tasks.remove(index);
+            System.out.println(DIVIDER);
+            System.out.println("Noted. I've removed this task:");
+            System.out.println("  " + removedTask);
+            System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+            System.out.println(DIVIDER);
+        } catch (NumberFormatException e) {
+            throw new HappyException("OOPS!!! Task number must be a valid integer.");
+        }
+    }
+
+    private static void handleTodoCommand(String input, ArrayList<Task> tasks) throws HappyException {
         String description = input.length() > 4 ? input.substring(4).trim() : "";
         if (description.isEmpty()) {
             throw new HappyException("OOPS!!! The description of a todo cannot be empty.");
         }
         Task task = new Todo(description);
-        tasks[taskCount] = task;
-        taskCount++;
-        printAddedTask(task, taskCount);
-        return taskCount;
+        tasks.add(task);
+        printAddedTask(task, tasks.size());
     }
 
-    private static int handleDeadlineCommand(String input, Task[] tasks, int taskCount) throws HappyException {
+    private static void handleDeadlineCommand(String input, ArrayList<Task> tasks) throws HappyException {
         String body = input.length() > 8 ? input.substring(8).trim() : "";
         if (body.isEmpty()) {
             throw new HappyException("OOPS!!! The description of a deadline cannot be empty.");
@@ -102,13 +124,11 @@ public class Happy {
             throw new HappyException("OOPS!!! The deadline date/time ('/by') cannot be empty.");
         }
         Task task = new Deadline(description, by);
-        tasks[taskCount] = task;
-        taskCount++;
-        printAddedTask(task, taskCount);
-        return taskCount;
+        tasks.add(task);
+        printAddedTask(task, tasks.size());
     }
 
-    private static int handleEventCommand(String input, Task[] tasks, int taskCount) throws HappyException {
+    private static void handleEventCommand(String input, ArrayList<Task> tasks) throws HappyException {
         String body = input.length() > 5 ? input.substring(5).trim() : "";
         if (body.isEmpty()) {
             throw new HappyException("OOPS!!! The description of an event cannot be empty.");
@@ -128,46 +148,44 @@ public class Happy {
             throw new HappyException("OOPS!!! The event start ('/from') and end ('/to') times cannot be empty.");
         }
         Task task = new Event(description, from, to);
-        tasks[taskCount] = task;
-        taskCount++;
-        printAddedTask(task, taskCount);
-        return taskCount;
+        tasks.add(task);
+        printAddedTask(task, tasks.size());
     }
 
-    private static void handleMarkCommand(String input, Task[] tasks, int taskCount) throws HappyException {
+    private static void handleMarkCommand(String input, ArrayList<Task> tasks) throws HappyException {
         String indexStr = input.length() > 4 ? input.substring(4).trim() : "";
         if (indexStr.isEmpty()) {
             throw new HappyException("OOPS!!! Please specify a task number to mark.");
         }
         try {
             int index = Integer.parseInt(indexStr) - 1;
-            if (index < 0 || index >= taskCount) {
+            if (index < 0 || index >= tasks.size()) {
                 throw new HappyException("OOPS!!! Task number " + (index + 1) + " does not exist.");
             }
-            tasks[index].markAsDone();
+            tasks.get(index).markAsDone();
             System.out.println(DIVIDER);
             System.out.println("Nice! I've marked this task as done:");
-            System.out.println("  " + tasks[index]);
+            System.out.println("  " + tasks.get(index));
             System.out.println(DIVIDER);
         } catch (NumberFormatException e) {
             throw new HappyException("OOPS!!! Task number must be a valid integer.");
         }
     }
 
-    private static void handleUnmarkCommand(String input, Task[] tasks, int taskCount) throws HappyException {
+    private static void handleUnmarkCommand(String input, ArrayList<Task> tasks) throws HappyException {
         String indexStr = input.length() > 6 ? input.substring(6).trim() : "";
         if (indexStr.isEmpty()) {
             throw new HappyException("OOPS!!! Please specify a task number to unmark.");
         }
         try {
             int index = Integer.parseInt(indexStr) - 1;
-            if (index < 0 || index >= taskCount) {
+            if (index < 0 || index >= tasks.size()) {
                 throw new HappyException("OOPS!!! Task number " + (index + 1) + " does not exist.");
             }
-            tasks[index].markAsNotDone();
+            tasks.get(index).markAsNotDone();
             System.out.println(DIVIDER);
             System.out.println("OK, I've marked this task as not done yet:");
-            System.out.println("  " + tasks[index]);
+            System.out.println("  " + tasks.get(index));
             System.out.println(DIVIDER);
         } catch (NumberFormatException e) {
             throw new HappyException("OOPS!!! Task number must be a valid integer.");
