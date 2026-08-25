@@ -88,5 +88,6 @@ public class Event extends Task {
                 ? toDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy"))
                 : toRaw;
         return "[E]" + super.toString() + " (from: " + formattedFrom + " to: " + formattedTo + ")";
+
     }
 }
