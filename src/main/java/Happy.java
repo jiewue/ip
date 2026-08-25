@@ -2,13 +2,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
  * Main entry point for the Happy chatbot application.
- * Handles task management (Todo, Deadline, Event), listing, marking, deleting,
- * file persistence (saving/loading), and custom exception handling.
+ * Handles task management (Todo, Deadline, Event), date/time parsing,
+ * listing, filtering by date, marking, deleting, file persistence, and exception handling.
  */
 public class Happy {
     // Horizontal line separator used for formatting output blocks
@@ -60,6 +63,8 @@ public class Happy {
                         System.out.println((i + 1) + "." + tasks.get(i));
                     }
                     System.out.println(DIVIDER);
+                } else if (input.startsWith("date") || input.startsWith("on")) {
+                    handleDateCommand(input, tasks);
                 } else if (input.startsWith("delete") || input.equalsIgnoreCase("delete")) {
                     handleDeleteCommand(input, tasks);
                     saveTasks(tasks);
@@ -88,6 +93,64 @@ public class Happy {
             }
         }
         scanner.close();
+    }
+
+    /**
+     * Handles searching and printing tasks that occur on a specific date.
+     *
+     * @param input Full command string entered by the user.
+     * @param tasks List of existing tasks.
+     * @throws HappyException If date parameter is missing or invalid.
+     */
+    private static void handleDateCommand(String input, ArrayList<Task> tasks) throws HappyException {
+        int spaceIndex = input.indexOf(' ');
+        if (spaceIndex == -1 || spaceIndex == input.length() - 1) {
+            throw new HappyException("OOPS!!! Please specify a date (e.g. date 2019-12-02 or date 2/12/2019).");
+        }
+        String dateStr = input.substring(spaceIndex + 1).trim();
+        LocalDate targetDate = parseInputDate(dateStr);
+        if (targetDate == null) {
+            throw new HappyException("OOPS!!! Invalid date format. Please use yyyy-MM-dd or d/M/yyyy (e.g., 2019-12-02).");
+        }
+
+        System.out.println(DIVIDER);
+        System.out.println("Here are the tasks occurring on " + targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy")) + ":");
+        int count = 0;
+        for (int i = 0; i < tasks.size(); i++) {
+            if (tasks.get(i).isOccurringOn(targetDate)) {
+                System.out.println((i + 1) + "." + tasks.get(i));
+                count++;
+            }
+        }
+        if (count == 0) {
+            System.out.println("  No tasks found for this date.");
+        }
+        System.out.println(DIVIDER);
+    }
+
+    /**
+     * Parses a date string into a LocalDate object.
+     *
+     * @param dateStr Raw date string.
+     * @return Parsed LocalDate object or null if parsing fails.
+     */
+    private static LocalDate parseInputDate(String dateStr) {
+        DateTimeFormatter[] formatters = new DateTimeFormatter[] {
+            DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+            DateTimeFormatter.ofPattern("d/M/yyyy"),
+            DateTimeFormatter.ofPattern("dd/MM/yyyy"),
+            DateTimeFormatter.ofPattern("yyyy/MM/dd"),
+            DateTimeFormatter.ofPattern("MMM dd yyyy"),
+            DateTimeFormatter.ofPattern("MMM d yyyy")
+        };
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                return LocalDate.parse(dateStr.trim(), formatter);
+            } catch (DateTimeParseException ignored) {
+                // Continue trying remaining formatters
+            }
+        }
+        return null;
     }
 
     /**

@@ -1,5 +1,7 @@
+import java.time.LocalDate;
+
 /**
- * Represents a task with a description and completion status.
+ * Represents a generic task with a description and completion status.
  */
 public class Task {
     protected String description;
@@ -45,6 +47,17 @@ public class Task {
      */
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * Checks if the task occurs or is due on a specific target date.
+     * Base implementation returns false.
+     *
+     * @param date Target date to check against.
+     * @return true if task occurs on target date, false otherwise.
+     */
+    public boolean isOccurringOn(LocalDate date) {
+        return false;
     }
 
     /**
