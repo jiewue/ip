@@ -1,18 +1,26 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
  * Main entry point for the Happy chatbot application.
  * Handles task management (Todo, Deadline, Event), listing, marking, deleting,
- * using ArrayList collections and custom exception handling.
+ * file persistence (saving/loading), and custom exception handling.
  */
 public class Happy {
     // Horizontal line separator used for formatting output blocks
     private static final String DIVIDER = "____________________________________________________________";
 
+    // Path to the data storage file (OS-independent relative path)
+    private static final String DATA_DIR = Paths.get(".", "data").toString();
+    private static final String DATA_FILE = Paths.get(".", "data", "happy.txt").toString();
+
     /**
-     * Starts the Happy chatbot program, reads user inputs, handles commands,
-     * catches application exceptions, and exits on "bye".
+     * Starts the Happy chatbot program, loads existing tasks from disk,
+     * processes user inputs, saves task updates, and exits on "bye".
      *
      * @param args Command line arguments (not used).
      */
@@ -30,6 +38,7 @@ public class Happy {
         System.out.println(DIVIDER);
 
         ArrayList<Task> tasks = new ArrayList<>();
+        loadTasks(tasks);
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -53,16 +62,22 @@ public class Happy {
                     System.out.println(DIVIDER);
                 } else if (input.startsWith("delete") || input.equalsIgnoreCase("delete")) {
                     handleDeleteCommand(input, tasks);
+                    saveTasks(tasks);
                 } else if (input.startsWith("mark") || input.equalsIgnoreCase("mark")) {
                     handleMarkCommand(input, tasks);
+                    saveTasks(tasks);
                 } else if (input.startsWith("unmark") || input.equalsIgnoreCase("unmark")) {
                     handleUnmarkCommand(input, tasks);
+                    saveTasks(tasks);
                 } else if (input.startsWith("todo") || input.equalsIgnoreCase("todo")) {
                     handleTodoCommand(input, tasks);
+                    saveTasks(tasks);
                 } else if (input.startsWith("deadline") || input.equalsIgnoreCase("deadline")) {
                     handleDeadlineCommand(input, tasks);
+                    saveTasks(tasks);
                 } else if (input.startsWith("event") || input.equalsIgnoreCase("event")) {
                     handleEventCommand(input, tasks);
+                    saveTasks(tasks);
                 } else {
                     throw new HappyException("OOPS!!! I'm sorry, but I don't know what that means :-(");
                 }
@@ -73,6 +88,81 @@ public class Happy {
             }
         }
         scanner.close();
+    }
+
+    /**
+     * Loads tasks from the local hard disk file if it exists.
+     * Skips corrupted lines safely.
+     *
+     * @param tasks The task list to populate with loaded tasks.
+     */
+    private static void loadTasks(ArrayList<Task> tasks) {
+        File file = new File(DATA_FILE);
+        if (!file.exists()) {
+            return;
+        }
+
+        try (Scanner fileScanner = new Scanner(file)) {
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine().trim();
+                if (line.isEmpty()) {
+                    continue;
+                }
+
+                String[] parts = line.split("\\s*\\|\\s*");
+                if (parts.length < 3) {
+                    continue; // Skip invalid or corrupted format
+                }
+
+                String type = parts[0];
+                boolean isDone = parts[1].equals("1");
+                String description = parts[2];
+
+                Task task = null;
+                if (type.equals("T")) {
+                    task = new Todo(description);
+                } else if (type.equals("D") && parts.length >= 4) {
+                    String by = parts[3];
+                    task = new Deadline(description, by);
+                } else if (type.equals("E") && parts.length >= 5) {
+                    String from = parts[3];
+                    String to = parts[4];
+                    task = new Event(description, from, to);
+                }
+
+                if (task != null) {
+                    if (isDone) {
+                        task.markAsDone();
+                    }
+                    tasks.add(task);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Warning: Unable to load data from file: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Saves the current list of tasks to the hard disk file.
+     * Creates parent directories if they do not exist.
+     *
+     * @param tasks The task list to save.
+     */
+    private static void saveTasks(ArrayList<Task> tasks) {
+        try {
+            File dir = new File(DATA_DIR);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            File file = new File(DATA_FILE);
+            try (FileWriter writer = new FileWriter(file)) {
+                for (Task task : tasks) {
+                    writer.write(task.toFileFormat() + System.lineSeparator());
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Warning: Unable to save data to file: " + e.getMessage());
+        }
     }
 
     private static void handleDeleteCommand(String input, ArrayList<Task> tasks) throws HappyException {

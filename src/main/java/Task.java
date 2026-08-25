@@ -47,6 +47,15 @@ public class Task {
         return description;
     }
 
+    /**
+     * Converts the task object into a file storage string format.
+     *
+     * @return Formatted string representation for file storage.
+     */
+    public String toFileFormat() {
+        return (isDone ? "1" : "0") + " | " + description;
+    }
+
     @Override
     public String toString() {
         return "[" + getStatusIcon() + "] " + description;
