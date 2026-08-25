@@ -1,3 +1,5 @@
+package happy.task;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -88,6 +90,5 @@ public class Event extends Task {
                 ? toDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy"))
                 : toRaw;
         return "[E]" + super.toString() + " (from: " + formattedFrom + " to: " + formattedTo + ")";
-
     }
 }

@@ -1,7 +1,12 @@
+package happy.ui;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import happy.task.Task;
+import happy.task.TaskList;
 
 /**
  * Handles all user interface interactions for the Happy chatbot.

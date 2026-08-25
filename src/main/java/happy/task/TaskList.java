@@ -1,5 +1,9 @@
+package happy.task;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
+
+import happy.exception.HappyException;
 
 /**
  * Encapsulates the task list and provides operations to add, delete,

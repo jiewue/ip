@@ -1,4 +1,12 @@
+package happy;
+
 import java.nio.file.Paths;
+
+import happy.exception.HappyException;
+import happy.parser.Parser;
+import happy.storage.Storage;
+import happy.task.TaskList;
+import happy.ui.Ui;
 
 /**
  * Main entry point for the Happy chatbot application.
