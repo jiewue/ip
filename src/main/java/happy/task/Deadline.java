@@ -19,8 +19,8 @@ public class Deadline extends Task {
      */
     public Deadline(String description, String by) {
         super(description);
-        this.byRaw = by;
-        this.byDate = parseDate(by);
+        byRaw = by;
+        byDate = parseDate(by);
     }
 
     /**

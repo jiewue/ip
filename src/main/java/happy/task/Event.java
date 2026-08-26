@@ -22,10 +22,10 @@ public class Event extends Task {
      */
     public Event(String description, String from, String to) {
         super(description);
-        this.fromRaw = from;
-        this.toRaw = to;
-        this.fromDate = parseDate(from);
-        this.toDate = parseDate(to);
+        fromRaw = from;
+        toRaw = to;
+        fromDate = parseDate(from);
+        toDate = parseDate(to);
     }
 
     /**

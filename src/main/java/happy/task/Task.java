@@ -16,7 +16,7 @@ public class Task {
      */
     public Task(String description) {
         this.description = description;
-        this.isDone = false;
+        isDone = false;
     }
 
     /**
@@ -32,14 +32,14 @@ public class Task {
      * Marks the task as completed.
      */
     public void markAsDone() {
-        this.isDone = true;
+        isDone = true;
     }
 
     /**
      * Marks the task as incomplete.
      */
     public void markAsNotDone() {
-        this.isDone = false;
+        isDone = false;
     }
 
     /**

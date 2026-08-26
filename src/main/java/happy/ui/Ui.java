@@ -25,7 +25,7 @@ public class Ui {
      * Constructs a new Ui instance with System.in input scanner.
      */
     public Ui() {
-        this.scanner = new Scanner(System.in);
+        scanner = new Scanner(System.in);
     }
 
     /**
