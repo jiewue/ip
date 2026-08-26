@@ -57,9 +57,20 @@ public class Parser {
         } else if (fullCommand.startsWith("event") || fullCommand.equalsIgnoreCase("event")) {
             handleEvent(fullCommand, tasks, ui, storage);
             return false;
+        } else if (fullCommand.startsWith("find") || fullCommand.equalsIgnoreCase("find")) {
+            handleFind(fullCommand, tasks, ui);
+            return false;
         } else {
             throw new HappyException("OOPS!!! I'm sorry, but I don't know what that means :-(");
         }
+    }
+
+    private static void handleFind(String command, TaskList tasks, Ui ui) throws HappyException {
+        String keyword = command.length() > 4 ? command.substring(4).trim() : "";
+        if (keyword.isEmpty()) {
+            throw new HappyException("OOPS!!! Please specify a keyword to search for.");
+        }
+        ui.showFoundTasks(tasks.find(keyword));
     }
 
     private static void handleTodo(String command, TaskList tasks, Ui ui, Storage storage) throws HappyException {

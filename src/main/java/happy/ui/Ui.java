@@ -171,6 +171,24 @@ public class Ui {
     }
 
     /**
+     * Displays all tasks matching a keyword search query.
+     *
+     * @param matchingTasks List of matching tasks found.
+     */
+    public void showFoundTasks(ArrayList<Task> matchingTasks) {
+        showLine();
+        if (matchingTasks.isEmpty()) {
+            System.out.println(" No matching tasks found in your list.");
+        } else {
+            System.out.println(" Here are the matching tasks in your list:");
+            for (int i = 0; i < matchingTasks.size(); i++) {
+                System.out.println(" " + (i + 1) + "." + matchingTasks.get(i));
+            }
+        }
+        showLine();
+    }
+
+    /**
      * Closes the input scanner resource.
      */
     public void close() {
