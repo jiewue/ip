@@ -3,6 +3,7 @@ package happy.parser;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 
 import happy.exception.HappyException;
 import happy.storage.Storage;
@@ -60,6 +61,140 @@ public class Parser {
         } else if (fullCommand.startsWith("find") || fullCommand.equalsIgnoreCase("find")) {
             handleFind(fullCommand, tasks, ui);
             return false;
+        } else {
+            throw new HappyException("OOPS!!! I'm sorry, but I don't know what that means :-(");
+        }
+    }
+
+    /**
+     * Parses user command for GUI execution and returns the response message.
+     *
+     * @param fullCommand Full user command string.
+     * @param tasks TaskList instance.
+     * @param storage Storage instance.
+     * @return Response text message to display in GUI dialog box.
+     * @throws HappyException If command syntax or arguments are invalid.
+     */
+    public static String parseAndExecuteForGui(String fullCommand, TaskList tasks, Storage storage)
+            throws HappyException {
+        if (fullCommand.equalsIgnoreCase("bye")) {
+            return "Bye. Hope to see you again soon!";
+        } else if (fullCommand.equalsIgnoreCase("list")) {
+            StringBuilder sb = new StringBuilder("Here are the tasks in your list:\n");
+            for (int i = 0; i < tasks.size(); i++) {
+                sb.append((i + 1)).append(".").append(tasks.get(i)).append("\n");
+            }
+            return sb.toString().trim();
+        } else if (fullCommand.startsWith("todo") || fullCommand.equalsIgnoreCase("todo")) {
+            String description = fullCommand.length() > 4 ? fullCommand.substring(4).trim() : "";
+            if (description.isEmpty()) {
+                throw new HappyException("OOPS!!! The description of a todo cannot be empty.");
+            }
+            Task task = new Todo(description);
+            tasks.add(task);
+            storage.save(tasks);
+            return "Got it. I've added this task:\n  " + task
+                    + "\nNow you have " + tasks.size() + " tasks in the list.";
+        } else if (fullCommand.startsWith("deadline") || fullCommand.equalsIgnoreCase("deadline")) {
+            String body = fullCommand.length() > 8 ? fullCommand.substring(8).trim() : "";
+            if (body.isEmpty()) {
+                throw new HappyException("OOPS!!! The description of a deadline cannot be empty.");
+            }
+            int byIndex = body.indexOf("/by");
+            if (byIndex == -1) {
+                throw new HappyException("OOPS!!! A deadline task must include a '/by' specified date/time.");
+            }
+            String description = body.substring(0, byIndex).trim();
+            String by = body.substring(byIndex + 3).trim();
+            if (description.isEmpty()) {
+                throw new HappyException("OOPS!!! The description of a deadline cannot be empty.");
+            }
+            if (by.isEmpty()) {
+                throw new HappyException("OOPS!!! The deadline date/time ('/by') cannot be empty.");
+            }
+            Task task = new Deadline(description, by);
+            tasks.add(task);
+            storage.save(tasks);
+            return "Got it. I've added this task:\n  " + task
+                    + "\nNow you have " + tasks.size() + " tasks in the list.";
+        } else if (fullCommand.startsWith("event") || fullCommand.equalsIgnoreCase("event")) {
+            String body = fullCommand.length() > 5 ? fullCommand.substring(5).trim() : "";
+            if (body.isEmpty()) {
+                throw new HappyException("OOPS!!! The description of an event cannot be empty.");
+            }
+            int fromIndex = body.indexOf("/from");
+            int toIndex = body.indexOf("/to");
+            if (fromIndex == -1 || toIndex == -1 || fromIndex >= toIndex) {
+                throw new HappyException("OOPS!!! An event task must specify both '/from' and '/to' time frames.");
+            }
+            String description = body.substring(0, fromIndex).trim();
+            String from = body.substring(fromIndex + 5, toIndex).trim();
+            String to = body.substring(toIndex + 3).trim();
+            if (description.isEmpty()) {
+                throw new HappyException("OOPS!!! The description of an event cannot be empty.");
+            }
+            if (from.isEmpty() || to.isEmpty()) {
+                throw new HappyException("OOPS!!! The event start ('/from') and end ('/to') times cannot be empty.");
+            }
+            Task task = new Event(description, from, to);
+            tasks.add(task);
+            storage.save(tasks);
+            return "Got it. I've added this task:\n  " + task
+                    + "\nNow you have " + tasks.size() + " tasks in the list.";
+        } else if (fullCommand.startsWith("delete") || fullCommand.equalsIgnoreCase("delete")) {
+            String indexStr = fullCommand.length() > 6 ? fullCommand.substring(6).trim() : "";
+            if (indexStr.isEmpty()) {
+                throw new HappyException("OOPS!!! Please specify a task number to delete.");
+            }
+            try {
+                int index = Integer.parseInt(indexStr) - 1;
+                Task removedTask = tasks.delete(index);
+                storage.save(tasks);
+                return "Noted. I've removed this task:\n  " + removedTask
+                        + "\nNow you have " + tasks.size() + " tasks in the list.";
+            } catch (NumberFormatException e) {
+                throw new HappyException("OOPS!!! Task number must be a valid integer.");
+            }
+        } else if (fullCommand.startsWith("mark") || fullCommand.equalsIgnoreCase("mark")) {
+            String indexStr = fullCommand.length() > 4 ? fullCommand.substring(4).trim() : "";
+            if (indexStr.isEmpty()) {
+                throw new HappyException("OOPS!!! Please specify a task number to mark.");
+            }
+            try {
+                int index = Integer.parseInt(indexStr) - 1;
+                Task markedTask = tasks.mark(index);
+                storage.save(tasks);
+                return "Nice! I've marked this task as done:\n  " + markedTask;
+            } catch (NumberFormatException e) {
+                throw new HappyException("OOPS!!! Task number must be a valid integer.");
+            }
+        } else if (fullCommand.startsWith("unmark") || fullCommand.equalsIgnoreCase("unmark")) {
+            String indexStr = fullCommand.length() > 6 ? fullCommand.substring(6).trim() : "";
+            if (indexStr.isEmpty()) {
+                throw new HappyException("OOPS!!! Please specify a task number to unmark.");
+            }
+            try {
+                int index = Integer.parseInt(indexStr) - 1;
+                Task unmarkedTask = tasks.unmark(index);
+                storage.save(tasks);
+                return "OK, I've marked this task as not done yet:\n  " + unmarkedTask;
+            } catch (NumberFormatException e) {
+                throw new HappyException("OOPS!!! Task number must be a valid integer.");
+            }
+        } else if (fullCommand.startsWith("find") || fullCommand.equalsIgnoreCase("find")) {
+            String keyword = fullCommand.length() > 4 ? fullCommand.substring(4).trim() : "";
+            if (keyword.isEmpty()) {
+                throw new HappyException("OOPS!!! Please specify a keyword to search for.");
+            }
+            ArrayList<Task> matchingTasks = tasks.find(keyword);
+            if (matchingTasks.isEmpty()) {
+                return "No matching tasks found in your list.";
+            }
+            StringBuilder sb = new StringBuilder("Here are the matching tasks in your list:\n");
+            for (int i = 0; i < matchingTasks.size(); i++) {
+                sb.append((i + 1)).append(".").append(matchingTasks.get(i)).append("\n");
+            }
+            return sb.toString().trim();
         } else {
             throw new HappyException("OOPS!!! I'm sorry, but I don't know what that means :-(");
         }

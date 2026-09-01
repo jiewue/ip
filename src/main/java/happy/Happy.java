@@ -61,4 +61,20 @@ public class Happy {
     public static void main(String[] args) {
         new Happy(Paths.get(".", "data", "happy.txt").toString()).run();
     }
+
+    /**
+    * Generates a response for the user's chat input.
+    *
+    * @param input User input string from GUI.
+    * @return Response message string from Happy.
+    */
+    public String getResponse(String input) {
+    try {
+        // Execute command and return response text
+        return Parser.parseAndExecuteForGui(input, tasks, storage);
+    } catch (HappyException e) {
+        return e.getMessage();
+    }
+}
+
 }

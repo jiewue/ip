@@ -57,7 +57,7 @@ test {
 }
 
 application {
-    mainClass = 'happy.Happy'
+    mainClass = 'happy.Launcher'
 }
 
 jar {
