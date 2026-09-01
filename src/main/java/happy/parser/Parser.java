@@ -185,7 +185,8 @@ public class Parser {
         String dateStr = command.substring(spaceIndex + 1).trim();
         LocalDate targetDate = parseInputDate(dateStr);
         if (targetDate == null) {
-            throw new HappyException("OOPS!!! Invalid date format. Please use yyyy-MM-dd or d/M/yyyy (e.g., 2019-12-02).");
+            throw new HappyException(
+                    "OOPS!!! Invalid date format. Please use yyyy-MM-dd or d/M/yyyy (e.g., 2019-12-02).");
         }
         ui.showTasksOnDate(targetDate, tasks.getTasksOccurringOn(targetDate));
     }
