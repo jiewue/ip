@@ -38,6 +38,18 @@ public class TaskList {
     }
 
     /**
+     * Adds one or more tasks to the task list.
+     *
+     * @param tasksToAdd Tasks to add.
+     */
+    public void add(Task... tasksToAdd) {
+        for (Task task : tasksToAdd) {
+            tasks.add(task);
+        }
+    }
+
+
+    /**
      * Deletes a task at the specified 0-based index.
      *
      * @param index Index of task to delete.
