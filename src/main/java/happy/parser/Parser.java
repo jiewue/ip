@@ -79,8 +79,10 @@ public class Parser {
             throws HappyException {
         assert fullCommand != null : "User command string should not be null";
         assert tasks != null : "TaskList instance passed to Parser should not be null";
-        assert storage != null : "Storage instance passed to Parser should not be null";
-        if (fullCommand.equalsIgnoreCase("bye")) {
+        String commandWord = fullCommand.trim().split("\\s+")[0].toLowerCase();
+
+        switch (commandWord) {
+        case "bye":
             return "Bye. Hope to see you again soon!";
         case "list":
             return executeListForGui(tasks);
