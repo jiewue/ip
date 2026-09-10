@@ -2,6 +2,7 @@ package happy.task;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import happy.exception.HappyException;
 
@@ -130,13 +131,9 @@ public class TaskList {
      * @return List of matching tasks.
      */
     public ArrayList<Task> getTasksOccurringOn(LocalDate date) {
-        ArrayList<Task> matchingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.isOccurringOn(date)) {
-                matchingTasks.add(task);
-            }
-        }
-        return matchingTasks;
+        return tasks.stream()
+                .filter(task -> task.isOccurringOn(date))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
@@ -146,13 +143,8 @@ public class TaskList {
      * @return List of matching tasks.
      */
     public ArrayList<Task> find(String keyword) {
-        ArrayList<Task> matchingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
-                matchingTasks.add(task);
-            }
-        }
-        return matchingTasks;
+        return tasks.stream()
+                .filter(task -> task.getDescription().toLowerCase().contains(keyword.toLowerCase()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
-
 }
