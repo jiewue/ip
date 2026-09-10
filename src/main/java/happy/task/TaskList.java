@@ -44,7 +44,9 @@ public class TaskList {
      * @param tasksToAdd Tasks to add.
      */
     public void add(Task... tasksToAdd) {
+        assert tasksToAdd != null : "Task array to add should not be null";
         for (Task task : tasksToAdd) {
+            assert task != null : "Task object to add should not be null";
             tasks.add(task);
         }
     }
