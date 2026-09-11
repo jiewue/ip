@@ -9,6 +9,7 @@ import happy.exception.HappyException;
 import happy.storage.Storage;
 import happy.task.Deadline;
 import happy.task.Event;
+import happy.task.Priority;
 import happy.task.Task;
 import happy.task.TaskList;
 import happy.task.Todo;
@@ -100,6 +101,8 @@ public class Parser {
             return executeUnmarkForGui(fullCommand, tasks, storage);
         case "find":
             return executeFindForGui(fullCommand, tasks);
+        case "priority":
+            return executePriorityForGui(fullCommand, tasks, storage);
         default:
             throw new HappyException("OOPS!!! I'm sorry, but I don't know what that means :-(");
         }
@@ -241,6 +244,24 @@ public class Parser {
             sb.append((i + 1)).append(".").append(matchingTasks.get(i)).append("\n");
         }
         return sb.toString().trim();
+    }
+
+    private static String executePriorityForGui(String command, TaskList tasks, Storage storage)
+            throws HappyException {
+        String body = command.length() > 8 ? command.substring(8).trim() : "";
+        String[] parts = body.split("\\s+");
+        if (parts.length < 2 || parts[0].isEmpty() || parts[1].isEmpty()) {
+            throw new HappyException("OOPS!!! Please specify task number and priority level (e.g. priority 1 high).");
+        }
+        try {
+            int index = Integer.parseInt(parts[0]) - 1;
+            Priority priority = Priority.parse(parts[1]);
+            Task updatedTask = tasks.setPriority(index, priority);
+            storage.save(tasks);
+            return "Got it. I've set the priority of this task:\n  " + updatedTask;
+        } catch (NumberFormatException e) {
+            throw new HappyException("OOPS!!! Task number must be a valid integer.");
+        }
     }
 
     private static String formatTaskAddedResponse(Task task, int totalTasks) {

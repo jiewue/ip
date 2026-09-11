@@ -8,6 +8,7 @@ import java.time.LocalDate;
 public class Task {
     protected String description;
     protected boolean isDone;
+    protected Priority priority = Priority.NONE;
 
     /**
      * Constructs a new Task with the given description.
@@ -18,6 +19,25 @@ public class Task {
         assert description != null : "Task description should not be null";
         this.description = description;
         isDone = false;
+    }
+
+    /**
+     * Returns the priority level of the task.
+     *
+     * @return Priority enum value.
+     */
+    public Priority getPriority() {
+        return priority;
+    }
+
+    /**
+     * Sets the priority level of the task.
+     *
+     * @param priority New Priority enum value.
+     */
+    public void setPriority(Priority priority) {
+        assert priority != null : "Priority cannot be null";
+        this.priority = priority;
     }
 
     /**
@@ -69,11 +89,13 @@ public class Task {
      * @return Formatted string representation for file storage.
      */
     public String toFileFormat() {
-        return (isDone ? "1" : "0") + " | " + description;
+        String pStr = priority == Priority.NONE ? "" : " | " + priority;
+        return (isDone ? "1" : "0") + pStr + " | " + description;
     }
 
     @Override
     public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
+        String pStr = priority == Priority.NONE ? "" : " [" + priority + "]";
+        return "[" + getStatusIcon() + "]" + pStr + " " + description;
     }
 }
