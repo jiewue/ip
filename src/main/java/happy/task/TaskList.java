@@ -99,6 +99,23 @@ public class TaskList {
     }
 
     /**
+     * Sets the priority of a task at the specified 0-based index.
+     *
+     * @param index 0-based index of task.
+     * @param priority Priority level.
+     * @return The updated Task object.
+     * @throws HappyException If index is out of bounds.
+     */
+    public Task setPriority(int index, Priority priority) throws HappyException {
+        if (index < 0 || index >= tasks.size()) {
+            throw new HappyException("OOPS!!! Task number " + (index + 1) + " does not exist.");
+        }
+        Task task = tasks.get(index);
+        task.setPriority(priority);
+        return task;
+    }
+
+    /**
      * Retrieves the task at the specified 0-based index.
      *
      * @param index Index of task to retrieve.
