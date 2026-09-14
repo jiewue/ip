@@ -127,7 +127,9 @@ public class Parser {
         if (description.isEmpty()) {
             throw new HappyException("HAPPY OOPS!!! The description of a todo cannot be empty.");
         }
+        validateNoPipeCharacter(description);
         Task task = new Todo(description);
+        validateNotDuplicate(task, tasks);
         tasks.add(task);
         storage.save(tasks);
         return formatTaskAddedResponse(task, tasks.size());
@@ -151,7 +153,10 @@ public class Parser {
         if (by.isEmpty()) {
             throw new HappyException("HAPPY OOPS!!! The deadline date/time ('/by') cannot be empty.");
         }
+        validateNoPipeCharacter(description);
+        validateNoPipeCharacter(by);
         Task task = new Deadline(description, by);
+        validateNotDuplicate(task, tasks);
         tasks.add(task);
         storage.save(tasks);
         return formatTaskAddedResponse(task, tasks.size());
@@ -177,7 +182,12 @@ public class Parser {
         if (from.isEmpty() || to.isEmpty()) {
             throw new HappyException("HAPPY OOPS!!! The event start ('/from') and end ('/to') times cannot be empty.");
         }
+        validateNoPipeCharacter(description);
+        validateNoPipeCharacter(from);
+        validateNoPipeCharacter(to);
+        validateEventTimes(from, to);
         Task task = new Event(description, from, to);
+        validateNotDuplicate(task, tasks);
         tasks.add(task);
         storage.save(tasks);
         return formatTaskAddedResponse(task, tasks.size());
@@ -253,7 +263,8 @@ public class Parser {
         String body = command.length() > 8 ? command.substring(8).trim() : "";
         String[] parts = body.split("\\s+");
         if (parts.length < 2 || parts[0].isEmpty() || parts[1].isEmpty()) {
-            throw new HappyException("HAPPY OOPS!!! Please specify task number and priority level (e.g. priority 1 high).");
+            throw new HappyException("HAPPY OOPS!!! Please specify task number and priority level "
+                    + "(e.g. priority 1 high).");
         }
         try {
             int index = Integer.parseInt(parts[0]) - 1;
@@ -284,7 +295,9 @@ public class Parser {
         if (description.isEmpty()) {
             throw new HappyException("HAPPY OOPS!!! The description of a todo cannot be empty.");
         }
+        validateNoPipeCharacter(description);
         Task task = new Todo(description);
+        validateNotDuplicate(task, tasks);
         tasks.add(task);
         storage.save(tasks);
         ui.showTaskAdded(task, tasks.size());
@@ -307,7 +320,10 @@ public class Parser {
         if (by.isEmpty()) {
             throw new HappyException("HAPPY OOPS!!! The deadline date/time ('/by') cannot be empty.");
         }
+        validateNoPipeCharacter(description);
+        validateNoPipeCharacter(by);
         Task task = new Deadline(description, by);
+        validateNotDuplicate(task, tasks);
         tasks.add(task);
         storage.save(tasks);
         ui.showTaskAdded(task, tasks.size());
@@ -332,7 +348,12 @@ public class Parser {
         if (from.isEmpty() || to.isEmpty()) {
             throw new HappyException("HAPPY OOPS!!! The event start ('/from') and end ('/to') times cannot be empty.");
         }
+        validateNoPipeCharacter(description);
+        validateNoPipeCharacter(from);
+        validateNoPipeCharacter(to);
+        validateEventTimes(from, to);
         Task task = new Event(description, from, to);
+        validateNotDuplicate(task, tasks);
         tasks.add(task);
         storage.save(tasks);
         ui.showTaskAdded(task, tasks.size());
@@ -414,5 +435,48 @@ public class Parser {
             }
         }
         return null;
+    }
+
+    /**
+     * Validates that the input string does not contain the pipe character '|' reserved for file storage.
+     *
+     * @param input String input to validate.
+     * @throws HappyException If the input string contains '|'.
+     */
+    private static void validateNoPipeCharacter(String input) throws HappyException {
+        if (input != null && input.contains("|")) {
+            throw new HappyException("HAPPY OOPS!!! Task parameters cannot contain the '|' character.");
+        }
+    }
+
+    /**
+     * Validates that event start date/time is not equal to or after the end date/time.
+     *
+     * @param from Start date/time string.
+     * @param to End date/time string.
+     * @throws HappyException If start time equals end time or start date is after end date.
+     */
+    private static void validateEventTimes(String from, String to) throws HappyException {
+        if (from.equalsIgnoreCase(to)) {
+            throw new HappyException("HAPPY OOPS!!! Event start time cannot be equal to end time.");
+        }
+        LocalDate startDate = parseInputDate(from);
+        LocalDate endDate = parseInputDate(to);
+        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
+            throw new HappyException("HAPPY OOPS!!! Event start date cannot be after end date.");
+        }
+    }
+
+    /**
+     * Validates that the task is not a duplicate of an existing task in the TaskList.
+     *
+     * @param task Task object to check.
+     * @param tasks TaskList instance containing current tasks.
+     * @throws HappyException If an identical task already exists in the list.
+     */
+    private static void validateNotDuplicate(Task task, TaskList tasks) throws HappyException {
+        if (tasks.isDuplicate(task)) {
+            throw new HappyException("HAPPY OOPS!!! This task already exists in your list.");
+        }
     }
 }

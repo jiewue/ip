@@ -166,4 +166,19 @@ public class TaskList {
                 .filter(task -> task.getDescription().toLowerCase().contains(keyword.toLowerCase()))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
+
+    /**
+     * Checks if an identical task already exists in the task list.
+     *
+     * @param newTask Task object to check.
+     * @return true if a duplicate task exists, false otherwise.
+     */
+    public boolean isDuplicate(Task newTask) {
+        for (Task existingTask : tasks) {
+            if (existingTask.equals(newTask)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

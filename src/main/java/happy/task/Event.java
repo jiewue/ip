@@ -91,4 +91,19 @@ public class Event extends Task {
                 : toRaw;
         return "[E]" + super.toString() + " (from: " + formattedFrom + " to: " + formattedTo + ")";
     }
+
+    /**
+     * Compares this Event task with another object for equality based on description, start, and end times.
+     *
+     * @param obj Target object to compare with.
+     * @return true if target object is an Event with matching description, start, and end times.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+        Event other = (Event) obj;
+        return this.fromRaw.equalsIgnoreCase(other.fromRaw) && this.toRaw.equalsIgnoreCase(other.toRaw);
+    }
 }

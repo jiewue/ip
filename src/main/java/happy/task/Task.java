@@ -98,4 +98,22 @@ public class Task {
         String pStr = priority == Priority.NONE ? "" : " [" + priority + "]";
         return "[" + getStatusIcon() + "]" + pStr + " " + description;
     }
+
+    /**
+     * Compares this task with another object for equality based on description.
+     *
+     * @param obj Target object to compare with.
+     * @return true if target object is a Task with matching description (case-insensitive).
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Task other = (Task) obj;
+        return this.description.equalsIgnoreCase(other.description);
+    }
 }

@@ -74,4 +74,19 @@ public class Deadline extends Task {
                 : byRaw;
         return "[D]" + super.toString() + " (by: " + formattedDate + ")";
     }
+
+    /**
+     * Compares this Deadline task with another object for equality based on description and deadline.
+     *
+     * @param obj Target object to compare with.
+     * @return true if target object is a Deadline with matching description and deadline.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (!super.equals(obj)) {
+            return false;
+        }
+        Deadline other = (Deadline) obj;
+        return this.byRaw.equalsIgnoreCase(other.byRaw);
+    }
 }
