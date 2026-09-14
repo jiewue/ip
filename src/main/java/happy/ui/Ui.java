@@ -50,8 +50,8 @@ public class Ui {
     public void showWelcome() {
         showLine();
         System.out.print(BANNER);
-        System.out.println("Hello! I'm Happy.");
-        System.out.println("What can I do for you?");
+        System.out.println("Hellllloooooooooo! I'm Happy, the happiest chatbot in the world!");
+        System.out.println("What can I do for you today?");
         showLine();
     }
 

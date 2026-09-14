@@ -63,7 +63,8 @@ public class Parser {
             handleFind(fullCommand, tasks, ui);
             return false;
         } else {
-            throw new HappyException("OOPS!!! I'm sorry, but I don't know what that means :-(");
+            throw new HappyException("Happy is way too happy right now to understand that command! "
+                    + "Perhaps you could phrase it differently?");
         }
     }
 
@@ -84,7 +85,7 @@ public class Parser {
 
         switch (commandWord) {
         case "bye":
-            return "Bye. Hope to see you again soon!";
+            return "Bye. Be happy everyday!";
         case "list":
             return executeListForGui(tasks);
         case "todo":
@@ -104,15 +105,16 @@ public class Parser {
         case "priority":
             return executePriorityForGui(fullCommand, tasks, storage);
         default:
-            throw new HappyException("OOPS!!! I'm sorry, but I don't know what that means :-(");
+            throw new HappyException("Happy is way too happy right now to understand that command! "
+                    + "Perhaps you could phrase it differently?");
         }
     }
 
     private static String executeListForGui(TaskList tasks) {
         if (tasks.size() == 0) {
-            return "Your task list is empty.";
+            return "Your task list is empty. Time to add some tasks and be happy!";
         }
-        StringBuilder sb = new StringBuilder("Here are the tasks in your list:\n");
+        StringBuilder sb = new StringBuilder("Here are the HAPPY TASKS in your list:\n");
         for (int i = 0; i < tasks.size(); i++) {
             sb.append((i + 1)).append(".").append(tasks.get(i)).append("\n");
         }
@@ -123,7 +125,7 @@ public class Parser {
             throws HappyException {
         String description = command.length() > 4 ? command.substring(4).trim() : "";
         if (description.isEmpty()) {
-            throw new HappyException("OOPS!!! The description of a todo cannot be empty.");
+            throw new HappyException("HAPPY OOPS!!! The description of a todo cannot be empty.");
         }
         Task task = new Todo(description);
         tasks.add(task);
@@ -135,19 +137,19 @@ public class Parser {
             throws HappyException {
         String body = command.length() > 8 ? command.substring(8).trim() : "";
         if (body.isEmpty()) {
-            throw new HappyException("OOPS!!! The description of a deadline cannot be empty.");
+            throw new HappyException("HAPPY OOPS!!! The description of a deadline cannot be empty.");
         }
         int byIndex = body.indexOf("/by");
         if (byIndex == -1) {
-            throw new HappyException("OOPS!!! A deadline task must include a '/by' specified date/time.");
+            throw new HappyException("HAPPY OOPS!!! A deadline task must include a '/by' specified date/time.");
         }
         String description = body.substring(0, byIndex).trim();
         String by = body.substring(byIndex + 3).trim();
         if (description.isEmpty()) {
-            throw new HappyException("OOPS!!! The description of a deadline cannot be empty.");
+            throw new HappyException("HAPPY OOPS!!! The description of a deadline cannot be empty.");
         }
         if (by.isEmpty()) {
-            throw new HappyException("OOPS!!! The deadline date/time ('/by') cannot be empty.");
+            throw new HappyException("HAPPY OOPS!!! The deadline date/time ('/by') cannot be empty.");
         }
         Task task = new Deadline(description, by);
         tasks.add(task);
@@ -159,21 +161,21 @@ public class Parser {
             throws HappyException {
         String body = command.length() > 5 ? command.substring(5).trim() : "";
         if (body.isEmpty()) {
-            throw new HappyException("OOPS!!! The description of an event cannot be empty.");
+            throw new HappyException("HAPPY OOPS!!! The description of an event cannot be empty.");
         }
         int fromIndex = body.indexOf("/from");
         int toIndex = body.indexOf("/to");
         if (fromIndex == -1 || toIndex == -1 || fromIndex >= toIndex) {
-            throw new HappyException("OOPS!!! An event task must specify both '/from' and '/to' time frames.");
+            throw new HappyException("HAPPY OOPS!!! An event task must specify both '/from' and '/to' time frames.");
         }
         String description = body.substring(0, fromIndex).trim();
         String from = body.substring(fromIndex + 5, toIndex).trim();
         String to = body.substring(toIndex + 3).trim();
         if (description.isEmpty()) {
-            throw new HappyException("OOPS!!! The description of an event cannot be empty.");
+            throw new HappyException("HAPPY OOPS!!! The description of an event cannot be empty.");
         }
         if (from.isEmpty() || to.isEmpty()) {
-            throw new HappyException("OOPS!!! The event start ('/from') and end ('/to') times cannot be empty.");
+            throw new HappyException("HAPPY OOPS!!! The event start ('/from') and end ('/to') times cannot be empty.");
         }
         Task task = new Event(description, from, to);
         tasks.add(task);
@@ -185,7 +187,7 @@ public class Parser {
             throws HappyException {
         String indexStr = command.length() > 6 ? command.substring(6).trim() : "";
         if (indexStr.isEmpty()) {
-            throw new HappyException("OOPS!!! Please specify a task number to delete.");
+            throw new HappyException("HAPPY OOPS!!! Please specify a task number to delete.");
         }
         try {
             int index = Integer.parseInt(indexStr) - 1;
@@ -194,7 +196,7 @@ public class Parser {
             return "Noted. I've removed this task:\n  " + removedTask
                     + "\nNow you have " + tasks.size() + " tasks in the list.";
         } catch (NumberFormatException e) {
-            throw new HappyException("OOPS!!! Task number must be a valid integer.");
+            throw new HappyException("HAPPY OOPS!!! Task number must be a valid integer.");
         }
     }
 
@@ -202,7 +204,7 @@ public class Parser {
             throws HappyException {
         String indexStr = command.length() > 4 ? command.substring(4).trim() : "";
         if (indexStr.isEmpty()) {
-            throw new HappyException("OOPS!!! Please specify a task number to mark.");
+            throw new HappyException("HAPPY OOPS!!! Please specify a task number to mark.");
         }
         try {
             int index = Integer.parseInt(indexStr) - 1;
@@ -210,7 +212,7 @@ public class Parser {
             storage.save(tasks);
             return "Nice! I've marked this task as done:\n  " + markedTask;
         } catch (NumberFormatException e) {
-            throw new HappyException("OOPS!!! Task number must be a valid integer.");
+            throw new HappyException("HAPPY OOPS!!! Task number must be a valid integer.");
         }
     }
 
@@ -218,7 +220,7 @@ public class Parser {
             throws HappyException {
         String indexStr = command.length() > 6 ? command.substring(6).trim() : "";
         if (indexStr.isEmpty()) {
-            throw new HappyException("OOPS!!! Please specify a task number to unmark.");
+            throw new HappyException("HAPPY OOPS!!! Please specify a task number to unmark.");
         }
         try {
             int index = Integer.parseInt(indexStr) - 1;
@@ -226,14 +228,14 @@ public class Parser {
             storage.save(tasks);
             return "OK, I've marked this task as not done yet:\n  " + unmarkedTask;
         } catch (NumberFormatException e) {
-            throw new HappyException("OOPS!!! Task number must be a valid integer.");
+            throw new HappyException("HAPPY OOPS!!! Task number must be a valid integer.");
         }
     }
 
     private static String executeFindForGui(String command, TaskList tasks) throws HappyException {
         String keyword = command.length() > 4 ? command.substring(4).trim() : "";
         if (keyword.isEmpty()) {
-            throw new HappyException("OOPS!!! Please specify a keyword to search for.");
+            throw new HappyException("HAPPY OOPS!!! Please specify a keyword to search for.");
         }
         ArrayList<Task> matchingTasks = tasks.find(keyword);
         if (matchingTasks.isEmpty()) {
@@ -251,7 +253,7 @@ public class Parser {
         String body = command.length() > 8 ? command.substring(8).trim() : "";
         String[] parts = body.split("\\s+");
         if (parts.length < 2 || parts[0].isEmpty() || parts[1].isEmpty()) {
-            throw new HappyException("OOPS!!! Please specify task number and priority level (e.g. priority 1 high).");
+            throw new HappyException("HAPPY OOPS!!! Please specify task number and priority level (e.g. priority 1 high).");
         }
         try {
             int index = Integer.parseInt(parts[0]) - 1;
@@ -260,7 +262,7 @@ public class Parser {
             storage.save(tasks);
             return "Got it. I've set the priority of this task:\n  " + updatedTask;
         } catch (NumberFormatException e) {
-            throw new HappyException("OOPS!!! Task number must be a valid integer.");
+            throw new HappyException("HAPPY OOPS!!! Task number must be a valid integer.");
         }
     }
 
@@ -272,7 +274,7 @@ public class Parser {
     private static void handleFind(String command, TaskList tasks, Ui ui) throws HappyException {
         String keyword = command.length() > 4 ? command.substring(4).trim() : "";
         if (keyword.isEmpty()) {
-            throw new HappyException("OOPS!!! Please specify a keyword to search for.");
+            throw new HappyException("HAPPY OOPS!!! Please specify a keyword to search for.");
         }
         ui.showFoundTasks(tasks.find(keyword));
     }
@@ -280,7 +282,7 @@ public class Parser {
     private static void handleTodo(String command, TaskList tasks, Ui ui, Storage storage) throws HappyException {
         String description = command.length() > 4 ? command.substring(4).trim() : "";
         if (description.isEmpty()) {
-            throw new HappyException("OOPS!!! The description of a todo cannot be empty.");
+            throw new HappyException("HAPPY OOPS!!! The description of a todo cannot be empty.");
         }
         Task task = new Todo(description);
         tasks.add(task);
@@ -291,19 +293,19 @@ public class Parser {
     private static void handleDeadline(String command, TaskList tasks, Ui ui, Storage storage) throws HappyException {
         String body = command.length() > 8 ? command.substring(8).trim() : "";
         if (body.isEmpty()) {
-            throw new HappyException("OOPS!!! The description of a deadline cannot be empty.");
+            throw new HappyException("HAPPY OOPS!!! The description of a deadline cannot be empty.");
         }
         int byIndex = body.indexOf("/by");
         if (byIndex == -1) {
-            throw new HappyException("OOPS!!! A deadline task must include a '/by' specified date/time.");
+            throw new HappyException("HAPPY OOPS!!! A deadline task must include a '/by' specified date/time.");
         }
         String description = body.substring(0, byIndex).trim();
         String by = body.substring(byIndex + 3).trim();
         if (description.isEmpty()) {
-            throw new HappyException("OOPS!!! The description of a deadline cannot be empty.");
+            throw new HappyException("HAPPY OOPS!!! The description of a deadline cannot be empty.");
         }
         if (by.isEmpty()) {
-            throw new HappyException("OOPS!!! The deadline date/time ('/by') cannot be empty.");
+            throw new HappyException("HAPPY OOPS!!! The deadline date/time ('/by') cannot be empty.");
         }
         Task task = new Deadline(description, by);
         tasks.add(task);
@@ -314,21 +316,21 @@ public class Parser {
     private static void handleEvent(String command, TaskList tasks, Ui ui, Storage storage) throws HappyException {
         String body = command.length() > 5 ? command.substring(5).trim() : "";
         if (body.isEmpty()) {
-            throw new HappyException("OOPS!!! The description of an event cannot be empty.");
+            throw new HappyException("HAPPY OOPS!!! The description of an event cannot be empty.");
         }
         int fromIndex = body.indexOf("/from");
         int toIndex = body.indexOf("/to");
         if (fromIndex == -1 || toIndex == -1 || fromIndex >= toIndex) {
-            throw new HappyException("OOPS!!! An event task must specify both '/from' and '/to' time frames.");
+            throw new HappyException("HAPPY OOPS!!! An event task must specify both '/from' and '/to' time frames.");
         }
         String description = body.substring(0, fromIndex).trim();
         String from = body.substring(fromIndex + 5, toIndex).trim();
         String to = body.substring(toIndex + 3).trim();
         if (description.isEmpty()) {
-            throw new HappyException("OOPS!!! The description of an event cannot be empty.");
+            throw new HappyException("HAPPY OOPS!!! The description of an event cannot be empty.");
         }
         if (from.isEmpty() || to.isEmpty()) {
-            throw new HappyException("OOPS!!! The event start ('/from') and end ('/to') times cannot be empty.");
+            throw new HappyException("HAPPY OOPS!!! The event start ('/from') and end ('/to') times cannot be empty.");
         }
         Task task = new Event(description, from, to);
         tasks.add(task);
@@ -339,7 +341,7 @@ public class Parser {
     private static void handleDelete(String command, TaskList tasks, Ui ui, Storage storage) throws HappyException {
         String indexStr = command.length() > 6 ? command.substring(6).trim() : "";
         if (indexStr.isEmpty()) {
-            throw new HappyException("OOPS!!! Please specify a task number to delete.");
+            throw new HappyException("HAPPY OOPS!!! Please specify a task number to delete.");
         }
         try {
             int index = Integer.parseInt(indexStr) - 1;
@@ -347,14 +349,14 @@ public class Parser {
             storage.save(tasks);
             ui.showTaskRemoved(removedTask, tasks.size());
         } catch (NumberFormatException e) {
-            throw new HappyException("OOPS!!! Task number must be a valid integer.");
+            throw new HappyException("HAPPY OOPS!!! Task number must be a valid integer.");
         }
     }
 
     private static void handleMark(String command, TaskList tasks, Ui ui, Storage storage) throws HappyException {
         String indexStr = command.length() > 4 ? command.substring(4).trim() : "";
         if (indexStr.isEmpty()) {
-            throw new HappyException("OOPS!!! Please specify a task number to mark.");
+            throw new HappyException("HAPPY OOPS!!! Please specify a task number to mark.");
         }
         try {
             int index = Integer.parseInt(indexStr) - 1;
@@ -362,14 +364,14 @@ public class Parser {
             storage.save(tasks);
             ui.showTaskMarked(markedTask);
         } catch (NumberFormatException e) {
-            throw new HappyException("OOPS!!! Task number must be a valid integer.");
+            throw new HappyException("HAPPY OOPS!!! Task number must be a valid integer.");
         }
     }
 
     private static void handleUnmark(String command, TaskList tasks, Ui ui, Storage storage) throws HappyException {
         String indexStr = command.length() > 6 ? command.substring(6).trim() : "";
         if (indexStr.isEmpty()) {
-            throw new HappyException("OOPS!!! Please specify a task number to unmark.");
+            throw new HappyException("HAPPY OOPS!!! Please specify a task number to unmark.");
         }
         try {
             int index = Integer.parseInt(indexStr) - 1;
@@ -377,20 +379,20 @@ public class Parser {
             storage.save(tasks);
             ui.showTaskUnmarked(unmarkedTask);
         } catch (NumberFormatException e) {
-            throw new HappyException("OOPS!!! Task number must be a valid integer.");
+            throw new HappyException("HAPPY OOPS!!! Task number must be a valid integer.");
         }
     }
 
     private static void handleDate(String command, TaskList tasks, Ui ui) throws HappyException {
         int spaceIndex = command.indexOf(' ');
         if (spaceIndex == -1 || spaceIndex == command.length() - 1) {
-            throw new HappyException("OOPS!!! Please specify a date (e.g. date 2019-12-02 or date 2/12/2019).");
+            throw new HappyException("HAPPY OOPS!!! Please specify a date (e.g. date 2019-12-02 or date 2/12/2019).");
         }
         String dateStr = command.substring(spaceIndex + 1).trim();
         LocalDate targetDate = parseInputDate(dateStr);
         if (targetDate == null) {
             throw new HappyException(
-                    "OOPS!!! Invalid date format. Please use yyyy-MM-dd or d/M/yyyy (e.g., 2019-12-02).");
+                    "HAPPY OOPS!!! Invalid date format. Please use yyyy-MM-dd or d/M/yyyy (e.g., 2019-12-02).");
         }
         ui.showTasksOnDate(targetDate, tasks.getTasksOccurringOn(targetDate));
     }

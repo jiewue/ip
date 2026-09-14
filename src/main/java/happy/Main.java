@@ -82,6 +82,11 @@ public class Main extends Application {
 
         dialogContainer.heightProperty().addListener((observable) -> scrollPane.setVvalue(1.0));
 
+        Label welcomeText = new Label(
+            "Hellllloooooooooo! I'm Happy, the happiest chatbot in the world! What can I do for you today?"
+        );
+        dialogContainer.getChildren().add(DialogBox.getHappyDialog(welcomeText, new ImageView(happyImage)));
+
         stage.show();
     }
 
