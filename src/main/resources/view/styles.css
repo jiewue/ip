@@ -30,7 +30,7 @@
 .button:hover {
     -fx-background-color: #b4befe;
 }
-/* 5. User Speech Bubble (Right-aligned, Blue) */
+/* 5. User Speech Bubble (Right-aligned, Compact Accent Pill) */
 .user-label {
     -fx-background-color: #89b4fa;
     -fx-text-fill: #11111b;
@@ -39,12 +39,15 @@
     -fx-font-size: 13px;
     -fx-font-family: "Segoe UI", sans-serif;
 }
-/* 6. Happy Chatbot Speech Bubble (Left-aligned, Dark Grey) */
+/* 6. Happy Chatbot Speech Bubble (Left-aligned, Card Container with subtle border) */
 .happy-label {
-    -fx-background-color: #313244;
+    -fx-background-color: #2a2b3d;
     -fx-text-fill: #cdd6f4;
-    -fx-padding: 10 14 10 14;
-    -fx-background-radius: 18 18 18 2; /* Flipped bubble corner */
+    -fx-padding: 12 16 12 16;
+    -fx-background-radius: 12;
+    -fx-border-color: #45475a;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12;
     -fx-font-size: 13px;
     -fx-font-family: "Segoe UI", sans-serif;
 }

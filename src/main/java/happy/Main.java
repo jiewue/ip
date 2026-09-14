@@ -50,13 +50,12 @@ public class Main extends Application {
 
         stage.setScene(scene);
         stage.setTitle("Happy Chatbot");
-        stage.setResizable(false);
+        stage.setResizable(true);
         stage.setMinHeight(600.0);
         stage.setMinWidth(400.0);
 
         mainLayout.setPrefSize(400.0, 600.0);
 
-        scrollPane.setPrefSize(385, 535);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setVvalue(1.0);
@@ -64,13 +63,16 @@ public class Main extends Application {
 
         dialogContainer.setPrefHeight(Region.USE_COMPUTED_SIZE);
 
-        userInput.setPrefWidth(325.0);
-
         sendButton.setPrefWidth(55.0);
 
         AnchorPane.setTopAnchor(scrollPane, 1.0);
+        AnchorPane.setLeftAnchor(scrollPane, 1.0);
+        AnchorPane.setRightAnchor(scrollPane, 1.0);
+        AnchorPane.setBottomAnchor(scrollPane, 45.0);
+
         AnchorPane.setBottomAnchor(userInput, 1.0);
         AnchorPane.setLeftAnchor(userInput, 1.0);
+        AnchorPane.setRightAnchor(userInput, 65.0);
 
         AnchorPane.setBottomAnchor(sendButton, 1.0);
         AnchorPane.setRightAnchor(sendButton, 1.0);
@@ -84,16 +86,16 @@ public class Main extends Application {
     }
 
     private void handleUserInput() {
-    String input = userInput.getText().trim();
-    if (input.isEmpty()) {
-        return;
+        String input = userInput.getText().trim();
+        if (input.isEmpty()) {
+            return;
+        }
+        Label userText = new Label(input);
+        Label happyText = new Label(happy.getResponse(input));
+        dialogContainer.getChildren().addAll(
+            DialogBox.getUserDialog(userText, new ImageView(userImage)),
+            DialogBox.getHappyDialog(happyText, new ImageView(happyImage))
+        );
+        userInput.clear();
     }
-    Label userText = new Label(input);
-    Label happyText = new Label(happy.getResponse(input));
-    dialogContainer.getChildren().addAll(
-        DialogBox.getUserDialog(userText, new ImageView(userImage)),
-        DialogBox.getHappyDialog(happyText, new ImageView(happyImage))
-    );
-    userInput.clear();
-}
 }

@@ -8,6 +8,17 @@ import java.time.format.DateTimeParseException;
  * Represents a Deadline task that needs to be done before a specific date/time.
  */
 public class Deadline extends Task {
+    private static final DateTimeFormatter[] DATE_FORMATTERS = new DateTimeFormatter[] {
+        DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+        DateTimeFormatter.ofPattern("d/M/yyyy"),
+        DateTimeFormatter.ofPattern("dd/MM/yyyy"),
+        DateTimeFormatter.ofPattern("yyyy/MM/dd"),
+        DateTimeFormatter.ofPattern("MMM dd yyyy"),
+        DateTimeFormatter.ofPattern("MMM d yyyy")
+    };
+    private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM dd yyyy");
+    private static final DateTimeFormatter STORAGE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     protected String byRaw;
     protected LocalDate byDate;
 
@@ -33,15 +44,7 @@ public class Deadline extends Task {
         if (dateStr == null || dateStr.trim().isEmpty()) {
             return null;
         }
-        DateTimeFormatter[] formatters = new DateTimeFormatter[] {
-            DateTimeFormatter.ofPattern("yyyy-MM-dd"),
-            DateTimeFormatter.ofPattern("d/M/yyyy"),
-            DateTimeFormatter.ofPattern("dd/MM/yyyy"),
-            DateTimeFormatter.ofPattern("yyyy/MM/dd"),
-            DateTimeFormatter.ofPattern("MMM dd yyyy"),
-            DateTimeFormatter.ofPattern("MMM d yyyy")
-        };
-        for (DateTimeFormatter formatter : formatters) {
+        for (DateTimeFormatter formatter : DATE_FORMATTERS) {
             try {
                 return LocalDate.parse(dateStr.trim(), formatter);
             } catch (DateTimeParseException ignored) {
@@ -59,7 +62,7 @@ public class Deadline extends Task {
     @Override
     public String toFileFormat() {
         String dateString = (byDate != null)
-                ? byDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                ? byDate.format(STORAGE_FORMATTER)
                 : byRaw;
         return "D | " + super.toFileFormat() + " | " + dateString;
     }
@@ -67,7 +70,7 @@ public class Deadline extends Task {
     @Override
     public String toString() {
         String formattedDate = (byDate != null)
-                ? byDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy"))
+                ? byDate.format(OUTPUT_FORMATTER)
                 : byRaw;
         return "[D]" + super.toString() + " (by: " + formattedDate + ")";
     }
