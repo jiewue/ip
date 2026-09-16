@@ -54,7 +54,7 @@ public class Happy {
     }
 
     /**
-     * Main method launching the Happy chatbot.
+     * Launches the Happy chatbot application.
      *
      * @param args Command line arguments (not used).
      */
@@ -63,18 +63,17 @@ public class Happy {
     }
 
     /**
-    * Generates a response for the user's chat input.
-    *
-    * @param input User input string from GUI.
-    * @return Response message string from Happy.
-    */
+     * Generates a response for the user's chat input.
+     *
+     * @param input User input string from GUI.
+     * @return Response message string from Happy.
+     */
     public String getResponse(String input) {
-    try {
-        // Execute command and return response text
-        return Parser.parseAndExecuteForGui(input, tasks, storage);
-    } catch (HappyException e) {
-        return e.getMessage();
+        try {
+            // Execute command and return response text
+            return Parser.parseAndExecuteForGui(input, tasks, storage);
+        } catch (HappyException e) {
+            return e.getMessage();
+        }
     }
-}
-
 }

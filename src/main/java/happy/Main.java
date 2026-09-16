@@ -33,38 +33,51 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        scrollPane = new ScrollPane();
-        dialogContainer = new VBox();
-        dialogContainer.setSpacing(10);
-        dialogContainer.setPadding(new javafx.geometry.Insets(10));
-        scrollPane.setContent(dialogContainer);
+        initializeControls();
 
-        userInput = new TextField();
-        sendButton = new Button("Send");
-
-        AnchorPane mainLayout = new AnchorPane();
-        mainLayout.getChildren().addAll(scrollPane, userInput, sendButton);
+        AnchorPane mainLayout = new AnchorPane(scrollPane, userInput, sendButton);
+        mainLayout.setPrefSize(400.0, 600.0);
 
         scene = new Scene(mainLayout);
         scene.getStylesheets().add(getClass().getResource("/view/styles.css").toExternalForm());
 
-        stage.setScene(scene);
-        stage.setTitle("Happy Chatbot");
-        stage.setResizable(true);
-        stage.setMinHeight(600.0);
-        stage.setMinWidth(400.0);
+        configureStage(stage);
+        configureLayoutAnchors();
+        showWelcomeGreeting();
 
-        mainLayout.setPrefSize(400.0, 600.0);
+        stage.show();
+    }
 
+    private void initializeControls() {
+        scrollPane = new ScrollPane();
+        dialogContainer = new VBox(10);
+        dialogContainer.setPadding(new javafx.geometry.Insets(10));
+        dialogContainer.setPrefHeight(Region.USE_COMPUTED_SIZE);
+        dialogContainer.heightProperty().addListener((observable) -> scrollPane.setVvalue(1.0));
+
+        scrollPane.setContent(dialogContainer);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setVvalue(1.0);
         scrollPane.setFitToWidth(true);
 
-        dialogContainer.setPrefHeight(Region.USE_COMPUTED_SIZE);
-
+        userInput = new TextField();
+        sendButton = new Button("Send");
         sendButton.setPrefWidth(55.0);
 
+        sendButton.setOnMouseClicked((event) -> handleUserInput());
+        userInput.setOnAction((event) -> handleUserInput());
+    }
+
+    private void configureStage(Stage stage) {
+        stage.setScene(scene);
+        stage.setTitle("Happy Chatbot");
+        stage.setResizable(true);
+        stage.setMinHeight(600.0);
+        stage.setMinWidth(400.0);
+    }
+
+    private void configureLayoutAnchors() {
         AnchorPane.setTopAnchor(scrollPane, 1.0);
         AnchorPane.setLeftAnchor(scrollPane, 1.0);
         AnchorPane.setRightAnchor(scrollPane, 1.0);
@@ -76,18 +89,13 @@ public class Main extends Application {
 
         AnchorPane.setBottomAnchor(sendButton, 1.0);
         AnchorPane.setRightAnchor(sendButton, 1.0);
+    }
 
-        sendButton.setOnMouseClicked((event) -> handleUserInput());
-        userInput.setOnAction((event) -> handleUserInput());
-
-        dialogContainer.heightProperty().addListener((observable) -> scrollPane.setVvalue(1.0));
-
+    private void showWelcomeGreeting() {
         Label welcomeText = new Label(
             "Hellllloooooooooo! I'm Happy, the happiest chatbot in the world! What can I do for you today?"
         );
         dialogContainer.getChildren().add(DialogBox.getHappyDialog(welcomeText, new ImageView(happyImage)));
-
-        stage.show();
     }
 
     private void handleUserInput() {
