@@ -71,6 +71,13 @@ public class ParserTest {
     }
 
     @Test
+    public void parseAndExecuteForGui_validDateFilter_returnsMatchingTasks() throws HappyException {
+        Parser.parseAndExecuteForGui("deadline submit assignment /by 2026-10-15", tasks, storage);
+        String response = Parser.parseAndExecuteForGui("date 2026-10-15", tasks, storage);
+        assertTrue(response.contains("Here are the tasks occurring on Oct 15 2026:"));
+    }
+
+    @Test
     public void parseAndExecuteForGui_unrecognizedCommand_throwsException() {
         assertThrows(HappyException.class, () -> Parser.parseAndExecuteForGui("invalidcommand", tasks, storage));
     }

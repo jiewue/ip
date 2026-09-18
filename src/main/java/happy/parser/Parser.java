@@ -104,6 +104,9 @@ public class Parser {
             return executeFindForGui(fullCommand, tasks);
         case "priority":
             return executePriorityForGui(fullCommand, tasks, storage);
+        case "date":
+        case "on":
+            return executeDateForGui(fullCommand, tasks);
         default:
             throw new HappyException("Happy is way too happy right now to understand that command! "
                     + "Perhaps you could phrase it differently?");
@@ -252,6 +255,29 @@ public class Parser {
             return "No matching tasks found in your list.";
         }
         StringBuilder sb = new StringBuilder("Here are the matching tasks in your list:\n");
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            sb.append((i + 1)).append(".").append(matchingTasks.get(i)).append("\n");
+        }
+        return sb.toString().trim();
+    }
+
+    private static String executeDateForGui(String command, TaskList tasks) throws HappyException {
+        int spaceIndex = command.trim().indexOf(' ');
+        if (spaceIndex == -1 || spaceIndex == command.trim().length() - 1) {
+            throw new HappyException("HAPPY OOPS!!! Please specify a date (e.g. date 2026-09-18 or date 18/9/2026).");
+        }
+        String dateStr = command.trim().substring(spaceIndex + 1).trim();
+        LocalDate targetDate = parseInputDate(dateStr);
+        if (targetDate == null) {
+            throw new HappyException(
+                    "HAPPY OOPS!!! Invalid date format. Please use yyyy-MM-dd or d/M/yyyy (e.g., 2026-09-18).");
+        }
+        ArrayList<Task> matchingTasks = tasks.getTasksOccurringOn(targetDate);
+        String formattedDate = targetDate.format(DateTimeFormatter.ofPattern("MMM dd yyyy"));
+        if (matchingTasks.isEmpty()) {
+            return "No tasks found occurring on " + formattedDate + ".";
+        }
+        StringBuilder sb = new StringBuilder("Here are the tasks occurring on " + formattedDate + ":\n");
         for (int i = 0; i < matchingTasks.size(); i++) {
             sb.append((i + 1)).append(".").append(matchingTasks.get(i)).append("\n");
         }
